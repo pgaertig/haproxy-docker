@@ -1,2 +1,3 @@
 #!/bin/bash
-docker build .. -f ../Dockerfile -t haproxy:latest
+DIR=`dirname "$0"`
+docker build $DIR/.. -f $DIR/../Dockerfile -t haproxy:latest
