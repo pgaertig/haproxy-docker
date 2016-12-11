@@ -7,14 +7,26 @@ Freshly compiled HA-proxy 1.7.0 docker container with simple graceful reload and
  - logging provided with syslog redirection to stdio/console
  - graceful restart on configuration file change (on volume)
 
-## Usage
+## General usage
 
-To build the latest compilation as local docker image invoke the script
-  
-    ./utils/docker_build.sh
+Here is the pattern to run the image:
 
-It downloads HA-proxy, OpenSSL and temporarly various Debian packages to compile them. Once image is ready the following script starts an example
-ephemeral container in the interactive mode:
+   docker run -v <path-to-dir-with-haproxy.cfg>:/haproxy-data \
+              -p <hostPort>:<haproxy:port> -p <other-hostPort>:<other-haproxy:port> \
+              -e CONFIG=haproxy.cfg \
+              pgaertig/haproxy:latest
+
+The `/haproxy-data` is the only directory which should be mounted as volume. 
+You should put `haproxy.cfg` there, which will be monitored of any changes including timestamp change caused by simply `touch`ing the file.
+
+The image and containers do not expose any port by default because these are up to user's haproxy configuration. To expose a custom port use standard `docker` command line options (`-p`).
+
+To alter the default configuration file name just pass the new name with `CONFIG` environment variable when running a container.
+The container itself runs the `haproxy` server as `root` user however you can reduce the rights by `haproxy` configuration settings. For your convenience the `haproxy` user and group is created with uid/gid defined by DATA_USER_ID/DATA_GROUP_ID environment variables. By default `haproxy`'s uid/gid are 1000/1000.
+
+## Example usage
+
+The following script starts an example ephemeral container in the interactive mode:
 
     ./utils/docker_run_example.sh
 
@@ -63,5 +75,20 @@ By the way in th above console output you can see the log entry printed by hapro
 
     log 127.0.0.1:1514 local0 debug
 
-Refer to (haproxy configuration manual)[www.haproxy.org/download/1.7/doc/configuration.txt] for details.
+Refer to [haproxy configuration manual](www.haproxy.org/download/1.7/doc/configuration.txt) for details.
     
+## Build
+
+If you want to build the latest compilation as local docker image invoke the script:
+
+    ./utils/docker_build.sh
+
+It downloads haproxy, OpenSSL and temporarly various Debian packages to compile them.
+
+## Credits & licenses
+
+This project and docker image is licensed under permisive MIT License, see `LICENSE` file for more details. There are following packages used by this software:
+
+- haproxy, <http://www.haproxy.org/>, GNU General Public License Version 2
+- openssl, <https://www.openssl.org/source/license.html>
+- syslog GO package, https://github.com/ziutek/syslog, Copyright (c) 2012, Michal Derkacz, three-clause BSD License: <https://github.com/ziutek/syslog/blob/master/LICENSE>
