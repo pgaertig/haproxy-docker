@@ -1,9 +1,9 @@
 # haproxy-docker
-Freshly compiled HA-proxy 1.7.0 docker container with simple graceful reload and proper logging
+Freshly compiled HAProxy 1.7.0 docker container with simple graceful reload and proper logging
 
 ## Features:
 
- - HA-proxy v1.7.0 with OpenSSL 1.0.2 stable
+ - HAProxy v1.7.0 with OpenSSL 1.0.2 stable
  - logging provided with syslog redirection to stdio/console
  - graceful restart on configuration file change (on volume)
 
@@ -11,10 +11,10 @@ Freshly compiled HA-proxy 1.7.0 docker container with simple graceful reload and
 
 Here is the pattern to run the image:
 
-   docker run -v <path-to-dir-with-haproxy.cfg>:/haproxy-data \
-              -p <hostPort>:<haproxy:port> -p <other-hostPort>:<other-haproxy:port> \
-              -e CONFIG=haproxy.cfg \
-              pgaertig/haproxy:latest
+    docker run -v <path-to-dir-with-haproxy.cfg>:/haproxy-data \
+               -p <hostPort>:<haproxy:port> -p <other-hostPort>:<other-haproxy:port> \
+               -e CONFIG=haproxy.cfg \
+               pgaertig/haproxy:latest
 
 The `/haproxy-data` is the only directory which should be mounted as volume. 
 You should put `haproxy.cfg` there, which will be monitored of any changes including timestamp change caused by simply `touch`ing the file.
@@ -83,11 +83,11 @@ If you want to build the latest compilation as local docker image invoke the scr
 
     ./utils/docker_build.sh
 
-It downloads haproxy, OpenSSL and temporarly various Debian packages to compile them.
+It downloads sources of HAProxy and OpenSSL but also temporarly various Debian packages to compile them. The built image will be tagged as `pgaertig/haproxy:latest`.
 
 ## Credits & licenses
 
-This project and docker image is licensed under permisive MIT License, see `LICENSE` file for more details. There are following packages used by this software:
+This project and docker image is licensed under permisive MIT License, see `LICENSE` file for more details. The following packages used by this software:
 
 - haproxy, <http://www.haproxy.org/>, GNU General Public License Version 2
 - openssl, <https://www.openssl.org/source/license.html>
