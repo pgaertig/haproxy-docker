@@ -13,7 +13,7 @@ Here is the pattern to run the image:
 
     docker run -v <path-to-dir-with-haproxy.cfg>:/haproxy-data \
                -p <hostPort>:<haproxy:port> -p <other-hostPort>:<other-haproxy:port> \
-               -e CONFIG=haproxy.cfg \
+               -e CONFIG_FILE=haproxy.cfg \
                pgaertig/haproxy:latest
 
 The `/haproxy-data` is the only directory which should be mounted as volume. 
@@ -21,7 +21,7 @@ You should put `haproxy.cfg` there, which will be monitored of any changes inclu
 
 The image and containers do not expose any port by default because these are up to user's haproxy configuration. To expose a custom port use standard `docker` command line options (`-p`).
 
-To alter the default configuration file name just pass the new name with `CONFIG` environment variable when running a container.
+To alter the default configuration file name just pass the new name with `CONFIG_FILE` environment variable when running a container.
 The container itself runs the `haproxy` server as `root` user however you can reduce the rights by `haproxy` configuration settings. For your convenience the `haproxy` user and group is created with uid/gid defined by DATA_USER_ID/DATA_GROUP_ID environment variables. By default `haproxy`'s uid/gid are 1000/1000.
 
 ## Example usage
