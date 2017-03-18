@@ -12,7 +12,7 @@ RUN apt-get update -yq && apt-get upgrade -yq && \
     ./config no-shared && \
     make && \
     cd /haproxy-build && \
-    git checkout v1.7.0 && \
+    git checkout v1.7.3 && \
     make TARGET=custom CPU=native USE_PCRE=1 USE_PCRE_JIT=1 USE_LIBCRYPT=1 USE_LINUX_SPLICE=1 USE_LINUX_TPROXY=1 \
          USE_OPENSSL=1 USE_GETADDRINFO=1 USE_STATIC_PCRE=1 SSL_INC=/openssl-build/include SSL_LIB=/openssl-build ADDLIB=-ldl && \
     mv ./haproxy / && cd / && \
