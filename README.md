@@ -1,9 +1,12 @@
 # haproxy-docker
-Freshly compiled HAProxy 1.7.0 docker container with simple graceful reload and proper logging
+All-inclusive HAProxy 1.7.3 docker container with graceful reload, stdio logging, Lua and more
 
 ## Features:
 
- - HAProxy v1.7.0 with OpenSSL 1.0.2 stable
+ - HAProxy v1.7.3
+ - LibreSSL 2.4.5 (static)
+ - SLZ - zlib/gzip-compatible fast stateless compression (static)
+ - Lua 5.3.3 scripting
  - logging provided with syslog redirection to stdio/console
  - graceful restart on configuration file change (on volume)
 
@@ -87,8 +90,11 @@ It downloads sources of HAProxy and OpenSSL but also temporarly various Debian p
 
 ## Credits & licenses
 
+Development of this project is sponsored by [KurierPlikow.pl](https://kurierplikow.pl).
+
 This project and docker image is licensed under permisive MIT License, see `LICENSE` file for more details. The following packages used by this software:
 
 - haproxy, <http://www.haproxy.org/>, GNU General Public License Version 2
-- openssl, <https://www.openssl.org/source/license.html>
+- LibreSSL, <https://github.com/libressl/libressl/blob/master/src/LICENSE>
 - syslog GO package, https://github.com/ziutek/syslog, Copyright (c) 2012, Michal Derkacz, three-clause BSD License: <https://github.com/ziutek/syslog/blob/master/LICENSE>
+
