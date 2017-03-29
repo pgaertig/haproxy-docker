@@ -1,4 +1,4 @@
-FROM debian:unstable
+FROM debian:unstable-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LIBRESSL_VERSION=2.4.5 \
