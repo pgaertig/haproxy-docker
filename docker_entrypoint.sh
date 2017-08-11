@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/dumb-init /bin/bash
 USER_ID=${DATA_USER_ID:-1000}
 GROUP_ID=${DATA_GROUP_ID:-1000}
 CONFIG=${CONFIG_FILE:-"./haproxy.cfg"}

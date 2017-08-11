@@ -1,14 +1,14 @@
 FROM debian:unstable-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    LIBRESSL_VERSION=2.4.5 \
+    LIBRESSL_VERSION=2.5.0 \
     LIBSLZ_VERSION=v1.1.0 \
-    HAPROXY_VERSION=v1.7.3
+    HAPROXY_VERSION=v1.7.8
 
 ADD syslog-stdout/ /usr/src/syslog-stdout
 
 RUN apt-get update -yq && apt-get upgrade -yq && \
-    apt-get install -yq --no-install-recommends inotify-tools ca-certificates build-essential \
+    apt-get install -yq --no-install-recommends dumb-init inotify-tools ca-certificates build-essential \
                                                 git libpcre3-dev golang liblua5.3 liblua5.3-dev zlib1g-dev curl && \
     LIBSLZ_PATH=/usr/src/libslz && \
       git clone --branch=${LIBSLZ_VERSION} http://git.1wt.eu/git/libslz.git ${LIBSLZ_PATH} && \
@@ -36,6 +36,5 @@ RUN apt-get update -yq && apt-get upgrade -yq && \
 
 ADD docker_entrypoint.sh /
 
-
-ENTRYPOINT ["./docker_entrypoint.sh"]
+CMD ["./docker_entrypoint.sh"]
 

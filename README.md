@@ -1,10 +1,10 @@
 # haproxy-docker
-All-inclusive HAProxy 1.7.3 docker container with graceful reload, stdio logging, Lua and more
+All-inclusive HAProxy 1.7.8 docker container with graceful reload, stdio logging, Lua and more
 
 ## Features:
 
- - HAProxy v1.7.3
- - LibreSSL 2.4.5 (static)
+ - HAProxy v1.7.8
+ - LibreSSL 2.5.0 (static)
  - SLZ - zlib/gzip-compatible fast stateless compression (static)
  - Lua 5.3.3 scripting
  - logging provided with syslog redirection to stdio/console
@@ -19,7 +19,7 @@ Here is the pattern to run the image:
                -e CONFIG_FILE=haproxy.cfg \
                pgaertig/haproxy:latest
 
-The `/haproxy-data` is the only directory which should be mounted as volume. 
+Please consult tags to pin to fixed version instead of `latest` which may change in the feature. The `/haproxy-data` is the only directory which should be mounted as volume. 
 You should put `haproxy.cfg` there, which will be monitored of any changes including timestamp change caused by simply `touch`ing the file.
 
 The image and containers do not expose any port by default because these are up to user's haproxy configuration. To expose a custom port use standard `docker` command line options (`-p`).
