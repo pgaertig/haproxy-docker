@@ -12,22 +12,51 @@ All-inclusive HAProxy 1.7.8 docker container with graceful reload, stdio logging
 
 ## General usage
 
-Here is the pattern to run the image:
+Here is the pattern to run the image from the command line:
 
     docker run -v <path-to-dir-with-haproxy.cfg>:/haproxy-data \
                -p <hostPort>:<haproxy:port> -p <other-hostPort>:<other-haproxy:port> \
                -e CONFIG_FILE=haproxy.cfg \
+               -e EXTRA_WATCH_FILES=/haproxy-data/certs \
                pgaertig/haproxy:latest
 
-Please consult tags to pin to fixed version instead of `latest` which may change in the feature. The `/haproxy-data` is the only directory which should be mounted as volume. 
-You should put `haproxy.cfg` there, which will be monitored of any changes including timestamp change caused by simply `touch`ing the file.
+### Image version
+Please consult tags to pin to fixed version instead of `latest` which may change in the feature.
 
-The image and containers do not expose any port by default because these are up to user's haproxy configuration. To expose a custom port use standard `docker` command line options (`-p`).
+### Volumes
+Although image doesn't define any volumes you should provide the configuration by mounting 
+`/haproxy-data`. Alternatively you can extend the image within your own docker project and `ADD` command
+ to staticaly embed config into `/haproxy-data`.
 
-To alter the default configuration file name just pass the new name with `CONFIG_FILE` environment variable when running a container.
-The container itself runs the `haproxy` server as `root` user however you can reduce the rights by `haproxy` configuration settings. For your convenience the `haproxy` user and group is created with uid/gid defined by DATA_USER_ID/DATA_GROUP_ID environment variables. By default `haproxy`'s uid/gid are 1000/1000.
+### Ports
+The image and containers do not expose any port by default because these are up to your haproxy configuration. To expose a custom port use standard `docker` command line options (`-p`).
 
-## Example usage
+### Environment variables
+
+- `CONFIG_FILE`, default: `haproxy.cfg` 
+
+   This is main configuration file which is provided to haproxy executable as parameter.
+   The file is monitored for any changes including timestamp change (e.g. by `touch`ing the file) and in case of
+   a change the haproxy reloads the config.
+     
+- `EXTRA_WATCH_FILES`, default: empty
+
+   You can provide additional list of files or directories which should be monitored for changes.
+   The directories are watche recursively which means any change to nested files or subdirectories will trigger
+   haproxy config reload. It is convenient to set this variable to `/haproxy-data` to notice any change to
+   config and dependent files however make sure the changes won't trigger excessive 
+
+- `DATA_USER_ID`, default: 1000
+- `DATA_GROUP_ID`, default: 1000
+
+   For your convenience the `haproxy` user and group is created with uid/gid defined by these variables.
+   The container itself starts the `haproxy` server as `root` user however you can reduce the process privileges with these configuration settings:
+        
+        global
+          user haproxy
+          group haproxy
+          
+## Example demo
 
 The following script starts an example ephemeral container in the interactive mode:
 
@@ -80,14 +109,6 @@ By the way in th above console output you can see the log entry printed by hapro
 
 Refer to [haproxy configuration manual](www.haproxy.org/download/1.7/doc/configuration.txt) for details.
     
-## Build
-
-If you want to build the latest compilation as local docker image invoke the script:
-
-    ./utils/docker_build.sh
-
-It downloads sources of HAProxy and OpenSSL but also temporarly various Debian packages to compile them. The built image will be tagged as `pgaertig/haproxy:latest`.
-
 ## Credits & licenses
 
 Development of this project is sponsored by [KurierPlikow.pl](https://kurierplikow.pl).

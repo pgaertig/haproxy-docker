@@ -2,6 +2,7 @@
 USER_ID=${DATA_USER_ID:-1000}
 GROUP_ID=${DATA_GROUP_ID:-1000}
 CONFIG=${CONFIG_FILE:-"./haproxy.cfg"}
+WATCH_FILES="$CONFIG $EXTRA_WATCH_FILES"
 
 function log() { echo "`date +'%Y/%m/%d %T'` <container> $@"; }
 
@@ -30,10 +31,11 @@ trap "trap - SIGTERM && kill -SIGUSR1 \$(cat $PID_FILE) ; kill 0" SIGINT SIGTERM
 $RUN_HAPROXY_CMD || exit $?
 
 log "Started haproxy"
-log "Listening for $CONFIG changes."
+log "Listening for $WATCH_FILES changes."
 
-while inotifywait -q -e modify,attrib $CONFIG ; do
+while inotifywait -q -r -e modify,attrib,create,delete $WATCH_FILES; do
   if [ -f $PID_FILE ] ; then
+    sleep 5 #graceful period for mutiple files update
     log "Config $CONFIG update event received, diff: "
     diff /tmp/old_haproxy.cfg $CONFIG
     log "Checking updated config"
