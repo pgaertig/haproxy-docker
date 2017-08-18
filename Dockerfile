@@ -1,4 +1,4 @@
-FROM debian:unstable-slim
+FROM debian:stretch-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LIBRESSL_VERSION=2.5.0 \
@@ -31,6 +31,8 @@ RUN apt-get update -yq && apt-get upgrade -yq && \
     apt-get purge -yq --autoremove build-essential git libpcre3-dev golang liblua5.3-dev zlib1g-dev curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     rm -rf /usr/src/* /usr/share/doc /usr/share/doc-base /usr/share/man /usr/share/locale /usr/share/zoneinfo && \
+    groupadd -g 1000 -o haproxy && \
+    useradd --shell /usr/sbin/nologin -u 1000 -o -c "" -g 1000 haproxy --home /haproxy-data && \
     /haproxy -vv
 
 

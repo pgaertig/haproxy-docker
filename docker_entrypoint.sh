@@ -6,9 +6,9 @@ WATCH_FILES="$CONFIG $EXTRA_WATCH_FILES"
 
 function log() { echo "`date +'%Y/%m/%d %T'` <container> $@"; }
 
-#Create unprivileged user
-groupadd -g $GROUP_ID -o haproxy
-useradd --shell /usr/sbin/nologin -u $USER_ID -o -c "" -g $GROUP_ID haproxy --home /haproxy-data
+#Update unprivileged user
+groupmod -g ${GROUP_ID} haproxy
+usermod -u ${USER_ID} -g haproxy -G www-data haproxy
 chown haproxy:haproxy /haproxy-data
 
 cd /haproxy-data
