@@ -3,7 +3,7 @@ FROM debian:stretch-slim
 ENV DEBIAN_FRONTEND=noninteractive \
     LIBRESSL_VERSION=2.5.0 \
     LIBSLZ_VERSION=v1.1.0 \
-    HAPROXY_VERSION=v1.7.8
+    HAPROXY_VERSION=v1.7.9
 
 ADD syslog-stdout/ /usr/src/syslog-stdout
 

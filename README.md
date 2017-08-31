@@ -3,7 +3,7 @@ All-inclusive HAProxy 1.7.8 docker container with graceful reload, stdio logging
 
 ## Features:
 
- - HAProxy v1.7.8
+ - HAProxy v1.7.9
  - LibreSSL 2.5.0 (static)
  - SLZ - zlib/gzip-compatible fast stateless compression (static)
  - Lua 5.3.3 scripting
