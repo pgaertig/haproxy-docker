@@ -1,13 +1,16 @@
 # haproxy-docker
-All-inclusive HAProxy 1.7.8 docker container with graceful reload, stdio logging, Lua and more
+All-inclusive HAProxy 2.7 docker container with graceful reload, HTTP/3, Lua and more
+
+[![Docker Pulls](https://badgen.net/docker/pulls/pgaertig/haproxy?icon=docker&label=pulls)](https://hub.docker.com/r/pgaertig/haproxy/tags)
 
 ## Features:
 
- - HAProxy v1.7.9
- - LibreSSL 2.5.0 (static)
+ - HAProxy v2.7.3
+ - LibreSSL 3.6 (static)
  - SLZ - zlib/gzip-compatible fast stateless compression (static)
- - Lua 5.3.3 scripting
- - logging provided with syslog redirection to stdio/console
+ - HTTP/3 & QUIC support enabled (experimental)
+ - Lua 5.4 scripting
+ - logging to stdout (built-in since 1.8)
  - graceful restart on configuration file change (on volume)
 
 ## General usage
@@ -21,7 +24,7 @@ Here is the pattern to run the image from the command line:
                pgaertig/haproxy:latest
 
 ### Image version
-Please consult tags to pin to fixed version instead of `latest` which may change in the feature.
+For production deployment please consult GH tags or [Docker Hub tags](https://hub.docker.com/r/pgaertig/haproxy/tags) to pin to fixed version instead of `latest` which will change in the feature.
 
 ### Volumes
 Although image doesn't define any volumes you should provide the configuration by mounting 
@@ -56,7 +59,7 @@ The image and containers do not expose any port by default because these are up 
           user haproxy
           group haproxy
           
-## Example demo
+## Quick run demo
 
 The following script starts an example ephemeral container in the interactive mode:
 
@@ -103,11 +106,79 @@ In case of any error in the updated config the container stays safe with the old
     2016/12/09 17:25:11 <container> Check failed, no restart performed, haproxy will continue to use the old working config. Please fix the new config file.
     2016/12/09 17:25:19 <local0,info> 10.0.2.33:36128 [09/Dec/2016:17:25:19.783] fe_app be_app_stable/upstream_server 0/0/14/15/29 304 137 - - ---- 1/1/0/1/0 0/0 {-,"",""} "GET / HTTP/1.1"
 
-By the way in th above console output you can see the log entry printed by haproxy via `syslog-stdout` bridge. The bridge is started in parallel to haproxy  and to make use of it you can setup logging in haproxy config this way:
+By the way in th above console output you can see the log entry printed by haproxy via stdout:
 
-    log 127.0.0.1:1514 local0 debug
+    log stdout format raw daemon debug
 
-Refer to [haproxy configuration manual](www.haproxy.org/download/1.7/doc/configuration.txt) for details.
+Refer to [haproxy configuration manual](https://docs.haproxy.org/2.7/configuration.html) for details.
+
+## Forking and building your own
+
+Please feel free to fork this repo and contribute PRs. You can build and run the docker image under your own GitHub handle:
+
+    IMAGE_NAME=your_handle/haproxy:latest ./utils/docker_build.sh
+    IMAGE_NAME=your_handle/haproxy:latest ./utils/docker_run_example.sh
+
+## Latest build details
+
+    Running on: Linux 5.17.1-051701-generic #202203280950 SMP PREEMPT Mon Mar 28 09:59:31 UTC 2022 x86_64
+    Build options :
+    TARGET  = linux-glibc
+    CPU     = native
+    CC      = cc
+    CFLAGS  = -O2 -march=native -g -Wall -Wextra -Wundef -Wdeclaration-after-statement -Wfatal-errors -Wtype-limits -Wshift-negative-value -Wshift-overflow=2 -Wduplicated-cond -Wnull-dereference -fwrapv -Wno-address-of-packed-member -Wno-unused-label -Wno-sign-compare -Wno-unused-parameter -Wno-clobbered -Wno-missing-field-initializers -Wno-cast-function-type -Wno-string-plus-int -Wno-atomic-alignment -DLIBRESSL_HAS_QUIC
+    OPTIONS = USE_PCRE=1 USE_PCRE_JIT=1 USE_THREAD=1 USE_STATIC_PCRE=1 USE_LINUX_TPROXY=1 USE_LINUX_SPLICE=1 USE_LIBCRYPT=1 USE_CRYPT_H=1 USE_GETADDRINFO=1 USE_OPENSSL=1 USE_LUA=1 USE_SLZ=1 USE_TFO=1 USE_NS=1 USE_QUIC=1
+    DEBUG   = -DDEBUG_STRICT -DDEBUG_MEMORY_POOLS
+    
+    Feature list : -51DEGREES +ACCEPT4 +BACKTRACE -CLOSEFROM +CPU_AFFINITY +CRYPT_H -DEVICEATLAS +DL -ENGINE +EPOLL -EVPORTS +GETADDRINFO -KQUEUE +LIBCRYPT +LINUX_SPLICE +LINUX_TPROXY +LUA -MEMORY_PROFILING +NETFILTER +NS -OBSOLETE_LINKER +OPENSSL -OPENSSL_WOLFSSL -OT +PCRE -PCRE2 -PCRE2_JIT +PCRE_JIT +POLL +PRCTL -PROCCTL -PROMEX -PTHREAD_EMULATION +QUIC +RT +SHM_OPEN +SLZ +STATIC_PCRE -STATIC_PCRE2 -SYSTEMD +TFO +THREAD +THREAD_DUMP +TPROXY -WURFL -ZLIB
+    
+    Default settings :
+    bufsize = 16384, maxrewrite = 1024, maxpollevents = 200
+    
+    Built with multi-threading support (MAX_TGROUPS=16, MAX_THREADS=256, default=16).
+    Built with OpenSSL version : LibreSSL 3.6.2
+    Running on OpenSSL version : LibreSSL 3.6.2
+    OpenSSL library supports TLS extensions : yes
+    OpenSSL library supports SNI : yes
+    OpenSSL library supports : TLSv1.0 TLSv1.1 TLSv1.2 TLSv1.3
+    Built with Lua version : Lua 5.4.2
+    Built with network namespace support.
+    Support for malloc_trim() is enabled.
+    Built with libslz for stateless compression.
+    Compression algorithms supported : identity("identity"), deflate("deflate"), raw-deflate("deflate"), gzip("gzip")
+    Built with transparent proxy support using: IP_TRANSPARENT IPV6_TRANSPARENT IP_FREEBIND
+    Built with PCRE version : 8.39 2016-06-14
+    Running on PCRE version : 8.39 2016-06-14
+    PCRE library supports JIT : yes
+    Encrypted password support via crypt(3): yes
+    Built with gcc compiler version 10.2.1 20210110
+    
+    Available polling systems :
+    epoll : pref=300,  test result OK
+    poll : pref=200,  test result OK
+    select : pref=150,  test result OK
+    Total: 3 (3 usable), will use epoll.
+    
+    Available multiplexer protocols :
+    (protocols marked as <default> cannot be specified using 'proto' keyword)
+    quic : mode=HTTP  side=FE     mux=QUIC  flags=HTX|NO_UPG|FRAMED
+    h2 : mode=HTTP  side=FE|BE  mux=H2    flags=HTX|HOL_RISK|NO_UPG
+    fcgi : mode=HTTP  side=BE     mux=FCGI  flags=HTX|HOL_RISK|NO_UPG
+    <default> : mode=HTTP  side=FE|BE  mux=H1    flags=HTX
+    h1 : mode=HTTP  side=FE|BE  mux=H1    flags=HTX|NO_UPG
+    <default> : mode=TCP   side=FE|BE  mux=PASS  flags=
+    none : mode=TCP   side=FE|BE  mux=PASS  flags=NO_UPG
+    
+    Available services : none
+    
+    Available filters :
+    [BWLIM] bwlim-in
+    [BWLIM] bwlim-out
+    [CACHE] cache
+    [COMP] compression
+    [FCGI] fcgi-app
+    [SPOE] spoe
+    [TRACE] trace   
     
 ## Credits & licenses
 
